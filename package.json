@@ -1,7 +1,7 @@
 {
   "name": "riak-bucket-cleanup",
-  "version": "0.0.1",
-  "description": "Small node utility to export a whole bucket with all keys from riak into a file",
+  "version": "0.0.2",
+  "description": "Small node utility to delete bucket entries by using a regex.",
   "main": "./bin/riak-bucket-cleanup.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
