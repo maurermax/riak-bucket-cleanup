@@ -1,7 +1,7 @@
 #!/usr/bin/env node
 
 var program = require('commander');
-
+var async = require('async');
 program
     .version('0.0.1')
     .usage('[options] bucketName')
@@ -25,35 +25,13 @@ var regex = new RegExp(program.regex);
 program.emulate = !!program.emulate;
 var count = 0;
 var db = require("riak-js").getClient({host: program.host, port: program.port});
-db.keys(bucket,{keys:'stream'}, function (err) {
-  if (err) {
-    console.log('failed to fetch keys');
-    console.log(err);
-  }
-}).on('keys', handleKey).on('end', end).start();
 
-function end() {
-  if (count<=0) {
-    console.log('nothing done');
-  } else {
-    console.log('finished cleanup of '+count+' keys in bucket '+bucket);
-  }
-}
-
-function handleKey(keys) {
-  for (var i=0;i<keys.length;i++) {
-    var key = keys[i];
-    if (processKey(key)) {
-      count++;
-    }
-  }
-}
-
-function processKey(key) {
+var queue = async.queue(function (key, callback) {
   if (regex.test(key)) {
     if (program.emulate) {
       console.log('[EMULATION] would delete entry with key '+key);
     } else {
+      console.log('going to remove key '+key);
       db.remove(bucket, key, function(err) {
         if (err) {
           console.log(err);
@@ -63,9 +41,28 @@ function processKey(key) {
     return true;
   }
   return false;
+}, 100);
+
+queue.drain = function() {
+  if (receivedAll) {
+    queue.kill();
+    end();
+  }
+};
+
+function end() {
+  if (count<=0) {
+    console.log('nothing done');
+  } else {
+    console.log('finished cleanup of '+count+' keys in bucket '+bucket);
+  }
 }
 
-
-
-
-
+db.keys(bucket, {keys:'stream'}, function (err) {
+  if (err) {
+    console.log('failed to fetch keys');
+    console.log(err);
+  }
+}).on('keys', queue.push).on('end', function() {
+  receivedAll = true;
+}).start();
