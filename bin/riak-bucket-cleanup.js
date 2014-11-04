@@ -25,22 +25,25 @@ var regex = new RegExp(program.regex);
 program.emulate = !!program.emulate;
 var count = 0;
 var db = require("riak-js").getClient({host: program.host, port: program.port});
+var receivedAll = false;
 
 var queue = async.queue(function (key, callback) {
-  if (regex.test(key)) {
-    if (program.emulate) {
-      console.log('[EMULATION] would delete entry with key '+key);
-    } else {
-      console.log('going to remove key '+key);
-      db.remove(bucket, key, function(err) {
-        if (err) {
-          console.log(err);
-        }
-      });
-    }
-    return true;
+  if (!regex.test(key)) {
+    return setImmediate(callback);
   }
-  return false;
+  if (program.emulate) {
+    console.log('[EMULATION] would delete entry with key '+key);
+    return setImmediate(callback);
+  } else {
+    console.log('going to remove key '+key);
+    db.remove(bucket, key, function(err) {
+      if (err) {
+        console.log(err);
+      }
+      count++;
+      return setImmediate(callback);
+    });
+  }
 }, 100);
 
 queue.drain = function() {
@@ -65,4 +68,7 @@ db.keys(bucket, {keys:'stream'}, function (err) {
   }
 }).on('keys', queue.push).on('end', function() {
   receivedAll = true;
+  if (queue.idle()) {
+    end();
+  }
 }).start();
