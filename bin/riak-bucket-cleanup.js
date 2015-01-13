@@ -41,7 +41,7 @@ var queue = async.queue(function (key, callback) {
   } else {
     if (program.prune) {
       console.log('going to prune key ' + key);
-      db.save(bucket, key, "", function(err) {
+      db.save(bucket, key, {}, function(err) {
         if (err) {
           console.log(err);
         }
