@@ -8,7 +8,8 @@ program
     .option('-H, --host [host]','specify the host (default: localhost)')
     .option('-p, --port [port]','specify the post (default: 8098)')
     .option('-r, --regex [regex]','the regular expression that will be used to verify entries against')
-    .option('-e, --emulate','only output the keys that would be deleted, but do not delete for real')
+  .option('-e, --emulate','only output the keys that would be deleted, but do not delete for real')
+  .option('-u, --prune','prune entries by writing an empty string to them before actually deleting them')
     .parse(process.argv);
 if(!program.args.length) {
   program.help();
@@ -32,17 +33,28 @@ var queue = async.queue(function (key, callback) {
     return setImmediate(callback);
   }
   if (program.emulate) {
+    if (program.prune) {
+      console.log('[EMULATION] would prune entry with key '+key);
+    }
     console.log('[EMULATION] would delete entry with key '+key);
     return setImmediate(callback);
   } else {
-    console.log('going to remove key '+key);
-    db.remove(bucket, key, function(err) {
-      if (err) {
-        console.log(err);
-      }
-      count++;
-      return setImmediate(callback);
-    });
+    if (program.prune) {
+      console.log('going to prune key ' + key);
+      db.save(bucket, key, "", function(err) {
+        if (err) {
+          console.log(err);
+        }
+        console.log('going to remove key '+key);
+        db.remove(bucket, key, function(err) {
+          if (err) {
+            console.log(err);
+          }
+          count++;
+          return setImmediate(callback);
+        });
+      });
+    }
   }
 }, 100);
 

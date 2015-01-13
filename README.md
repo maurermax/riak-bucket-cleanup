@@ -23,4 +23,5 @@ clean riak entries where keys match a given regex
     -p, --port [port]    specify the post (default: 8098)
     -r, --regex [regex]  the regular expression that will be used to verify entries against
     -e, --emulate        only output the keys that would be deleted, but do not delete for real
+    -u, --prune          prune entries by writing an empty string to them before actually deleting them
 ````
