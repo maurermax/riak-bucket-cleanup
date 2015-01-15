@@ -1,9 +1,10 @@
 #!/usr/bin/env node
 
 var program = require('commander');
+var packageJson = require('../package.json');
 var async = require('async');
 program
-    .version('0.0.1')
+    .version(packageJson.version)
     .usage('[options] bucketName')
     .option('-H, --host [host]','specify the host (default: localhost)')
     .option('-p, --port [port]','specify the post (default: 8098)')
@@ -30,6 +31,7 @@ var receivedAll = false;
 
 var queue = async.queue(function (key, callback) {
   if (!regex.test(key)) {
+    console.log('skipping key ' + key  + ' as it does not match the regex');
     return setImmediate(callback);
   }
   if (program.emulate) {
@@ -78,7 +80,11 @@ db.keys(bucket, {keys:'stream'}, function (err) {
     console.log('failed to fetch keys');
     console.log(err);
   }
-}).on('keys', queue.push).on('end', function() {
+}).on('keys', function(keys) {
+  console.log('received ' + keys.length + ' keys');
+  queue.push(keys);
+  console.log('current queue size: ' + queue.length());
+}).on('end', function() {
   receivedAll = true;
   if (queue.idle()) {
     end();
