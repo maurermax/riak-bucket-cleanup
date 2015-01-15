@@ -56,6 +56,15 @@ var queue = async.queue(function (key, callback) {
           return setImmediate(callback);
         });
       });
+    } else {
+      console.log('going to remove key without pruning '+key);
+      db.remove(bucket, key, function(err) {
+        if (err) {
+          console.log(err);
+        }
+        count++;
+        return setImmediate(callback);
+      });
     }
   }
 }, 100);
