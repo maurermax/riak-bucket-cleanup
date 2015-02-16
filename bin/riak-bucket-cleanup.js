@@ -21,7 +21,7 @@ if (!program.args.length) {
 }
 program.host = program.host || 'localhost';
 program.port = program.port || '8098';
-program.numParallel = program.numParallel || 50;
+program.numParallel = program.numParallel || 10;
 if (!program.regex) {
   console.log('please provide a regex');
   program.help();
