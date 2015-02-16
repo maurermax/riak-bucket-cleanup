@@ -1,6 +1,6 @@
 {
   "name": "riak-bucket-cleanup",
-  "version": "0.0.9",
+  "version": "0.1.0",
   "description": "Small node utility to delete bucket entries by using a regex.",
   "main": "./bin/riak-bucket-cleanup.js",
   "scripts": {
@@ -22,6 +22,7 @@
   "author": "Max Maurer <maxemanuel.maurer@gmail.com> (http://max-maurer.de/)",
   "license": "MIT",
   "dependencies": {
+    "JSONPath": "^0.10.0",
     "async": "^0.9.0",
     "commander": "^2.3.0",
     "riak-js": "^0.10.2"
