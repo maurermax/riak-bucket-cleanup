@@ -27,7 +27,7 @@ if (!program.regex) {
   program.help();
   return;
 }
-if ((program.contentRegex && !program.contenPath) || (!program.contentRegex && program.contentPath)) {
+if ((program.contentRegex && !program.contentPath) || (!program.contentRegex && program.contentPath)) {
   console.log('you need to provide contentRegex and contentPath if you want to use this feature');
   program.help();
   return;
@@ -45,4 +45,6 @@ var settings = {
   contentRegex: program.contentRegex
 }
 
-cleanupLogic.cleanup(settings);
+cleanupLogic.cleanup(settings, function() {
+
+});
