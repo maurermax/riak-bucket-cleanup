@@ -12,8 +12,8 @@ program
   .option('-e, --emulate', 'only output the keys that would be deleted, but do not delete for real (default: false)')
   .option('-u, --prune', 'prune entries by writing an empty string to them before actually deleting them (default: false)')
   .option('-n, --numParallel [n]', 'the number of items that will be processed in parallel (default: 10)', parseInt)
-  .option('--contentPath', 'JSONPath of the content that is also verified matching the value of contentRegex before deleting a node. if the path does not exist the ndoe will not be deleted')
-  .option('--contentRegex', 'a regex that will be applied to a given content path in case it exists. the node will only be deleted if the regex matches')
+  .option('--contentPath [path] ', 'JSONPath of the content that is also verified matching the value of contentRegex before deleting a node. if the path does not exist the ndoe will not be deleted')
+  .option('--contentRegex [regex]', 'a regex that will be applied to a given content path in case it exists. the node will only be deleted if the regex matches')
   .parse(process.argv);
 if (!program.args.length) {
   program.help();
