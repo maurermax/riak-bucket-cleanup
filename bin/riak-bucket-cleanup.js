@@ -33,7 +33,6 @@ if ((program.contentRegex && !program.contenPath) || (!program.contentRegex && p
   return;
 }
 program.emulate = !!program.emulate;
-var regex = new RegExp(program.regex);
 var settings = {
   bucket: program.args,
   regex: program.regex,
