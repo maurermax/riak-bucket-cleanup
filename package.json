@@ -1,6 +1,6 @@
 {
   "name": "riak-bucket-cleanup",
-  "version": "0.1.3",
+  "version": "0.1.4",
   "description": "Small node utility to delete bucket entries by using a regex.",
   "main": "./bin/riak-bucket-cleanup.js",
   "scripts": {

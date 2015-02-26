@@ -28,8 +28,10 @@ describe('key based', function() {
       host: 'localhost',
       port: mockPort,
       regex: '.*',
-      prune: false,
-      emulate: false
+      purge: false,
+      emulate: false,
+      purgeZombies: false,
+      keys: null
     }
     done();
   });
@@ -66,6 +68,16 @@ describe('key based', function() {
     cleanupLogic.cleanup(options, function() {
       getKeys(function(keys) {
         expect(keys.length).to.be(0);
+        done();
+      });
+    });
+  });
+
+  it('when passing a key list this will be used instead requesting all keys', function(done) {
+    options.keys = ['key1'];
+    cleanupLogic.cleanup(options, function() {
+      getKeys(function(keys) {
+        expect(keys.length).to.be(1);
         done();
       });
     });
@@ -119,6 +131,18 @@ describe('key based', function() {
     cleanupLogic.cleanup(options, function() {
       getKeys(function(keys) {
         expect(keys.length).to.be(1);
+        done();
+      });
+    });
+  });
+
+  it('using the purgeZombies option will purge all keys that generate a 404 but not those existing', function(done) {
+    options.purgeZombies = true;
+    options.keys = ['key1', 'key2', '404key'];
+    cleanupLogic.cleanup(options, function(countDeleted) {
+      expect(countDeleted).to.be(1);
+      getKeys(function(keys) {
+        expect(keys.length).to.be(2);
         done();
       });
     });
