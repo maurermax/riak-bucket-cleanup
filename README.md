@@ -13,19 +13,20 @@ clean riak entries where keys match a given regex
 ### Any options? ###
 
 ````
- Usage: riak-bucket-cleanup [options] bucketName
+Usage: riak-bucket-cleanup [options] bucketName
 
-   Options:
+  Options:
 
-     -h, --help             output usage information
-     -V, --version          output the version number
-     -H, --host [host]      specify the host (default: localhost)
-     -p, --port [port]      specify the post (default: 8098)
-     -r, --regex [regex]    the regular expression that will be used to verify entries against
-     -e, --emulate          only output the keys that would be deleted, but do not delete for real (default: false)
-     -u, --purge            purge entries by writing an empty string to them before actually deleting them (default: false)
-     -n, --numParallel [n]  the number of items that will be processed in parallel (default: 10)
-     --contentPath          JSONPath of the content that is also verified matching the value of contentRegex before deleting a node. if the path does not exist the ndoe will not be deleted
-     --contentRegex         a regex that will be applied to a given content path in case it exists. the node will only be deleted if the regex matches
-     --purgeZombies         riak tends to create zombie entries sometimes. so documents that do not exist anymore but their key still shows up in the key listing. with this option set every single key will be loaded and if it cannot be found it will be purged.
+    -h, --help              output usage information
+    -V, --version           output the version number
+    -H, --host [host]       specify the host (default: localhost)
+    -p, --port [port]       specify the post (default: 8098)
+    -r, --regex [regex]     the regular expression that will be used to verify entries against
+    -e, --emulate           only output the keys that would be deleted, but do not delete for real (default: false)
+    -u, --purge             purge entries by writing an empty string to them before actually deleting them (default: false)
+    -n, --numParallel [n]   the number of items that will be processed in parallel (default: 10)
+    --keys [list]           specify a list of keys to use formatted as a JSON-array. (default: request the list of all keys from the server)
+    --contentPath [path]    JSONPath of the content that is also verified matching the value of contentRegex before deleting a node. if the path does not exist the ndoe will not be deleted
+    --contentRegex [regex]  a regex that will be applied to a given content path in case it exists. the node will only be deleted if the regex matches
+    --purgeZombies          riak tends to create zombie entries sometimes. so documents that do not exist anymore but their key still shows up in the key listing. with this option set every single key will be loaded and if it cannot be found it will be purged. if this mode is activated keys present will not be deleted anymore. the regex selects the keys to check for zombies (default: false)
 ````
