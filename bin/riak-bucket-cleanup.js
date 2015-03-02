@@ -10,10 +10,12 @@ program
   .option('-p, --port [port]', 'specify the post (default: 8098)')
   .option('-r, --regex [regex]', 'the regular expression that will be used to verify entries against')
   .option('-e, --emulate', 'only output the keys that would be deleted, but do not delete for real (default: false)')
-  .option('-u, --prune', 'prune entries by writing an empty string to them before actually deleting them (default: false)')
+  .option('-u, --purge', 'purge entries by writing an empty string to them before actually deleting them (default: false)')
   .option('-n, --numParallel [n]', 'the number of items that will be processed in parallel (default: 10)', parseInt)
+  .option('--keys [list]', 'specify a list of keys to use formatted as a JSON-array. (default: request the list of all keys from the server)')
   .option('--contentPath [path] ', 'JSONPath of the content that is also verified matching the value of contentRegex before deleting a node. if the path does not exist the ndoe will not be deleted')
   .option('--contentRegex [regex]', 'a regex that will be applied to a given content path in case it exists. the node will only be deleted if the regex matches')
+  .option('--purgeZombies', 'riak tends to create zombie entries sometimes. so documents that do not exist anymore but their key still shows up in the key listing. with this option set every single key will be loaded and if it cannot be found it will be purged. if this mode is activated keys present will not be deleted anymore. the regex selects the keys to check for zombies (default: false)')
   .parse(process.argv);
 if (!program.args.length) {
   program.help();
@@ -39,10 +41,12 @@ var settings = {
   host: program.host,
   port: program.port,
   emulate: program.emulate,
-  prune: program.prune,
+  purge: program.purge,
   numParallel: program.numParallel,
   contentPath: program.contentPath,
-  contentRegex: program.contentRegex
+  contentRegex: program.contentRegex,
+  purgeZombies: !!program.purgeZombies,
+  keys: JSON.parse(program.keys)
 }
 
 cleanupLogic.cleanup(settings, function() {
